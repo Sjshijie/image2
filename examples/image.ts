@@ -11,6 +11,7 @@ const readDir = async (directory: string,filePathArr:string[],isFirst:boolean) =
     
     const filename = dirEntry.name
     const filePath = path.join(directory, filename);
+    if(filePath.split('/')[filePath.split('/').length-1]==='.DS_Store') continue;
     const stats = Deno.statSync(filePath);
     if (!stats.isDirectory) {
       // filePathArr = filePathArr.filter(item=>{
@@ -31,12 +32,15 @@ const readDir = async (directory: string,filePathArr:string[],isFirst:boolean) =
         filePathArr = [...filePathArr,filePath]
         const canvas = createCanvas(1000, 1000);
         const ctx = canvas.getContext("2d");
-        filePathArr.forEach(async (item)=>{
-            if(item.split('/')[item.split('/').length-1]==='.DS_Store')return
-            const img = await loadImage('./'+item);
-            console.log(img)
+        // filePathArr.forEach(async (item)=>{
+        //     // console.log(item)
+        //     const img = await loadImage('./'+item);
+        //     ctx.drawImage(img, 0, 0);
+        // })
+        for(let value of filePathArr){
+            const img = await loadImage('./'+value);
             ctx.drawImage(img, 0, 0);
-        })
+        }
         await Deno.writeFile(`./image/${new Date().getTime()}.png`, canvas.toBuffer());
       }
       
